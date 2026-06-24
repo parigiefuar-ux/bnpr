@@ -7,6 +7,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app.py .
 
-EXPOSE 8080
+# Non forziamo l'EXPOSE a 8080, lasciamo che sia dinamico
+# EXPOSE 8080
 
 CMD ["python", "app.py"]
