@@ -65,5 +65,9 @@ def proxy(path):
     except Exception as e:
         return f"Errore nel proxy: {str(e)}", 500
 
+import os
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080)
+    # Legge la porta dalla variabile d'ambiente PORT, altrimenti usa 8080 di default
+    port = int(os.environ.get('PORT', 8080))
+    app.run(host='0.0.0.0', port=port)
