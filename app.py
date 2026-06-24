@@ -17,7 +17,8 @@ def proxy(path):
         headers_to_forward = {}
         for key, value in request.headers:
             key_lower = key.lower()
-            if key_lower not in ['host', 'x-target-url', 'connection', 'content-length']:
+            # Rimuoviamo anche X-Forwarded-For e X-Real-IP per evitare leak dell'IP originale
+            if key_lower not in ['host', 'x-target-url', 'connection', 'content-length', 'x-forwarded-for', 'x-real-ip']:
                 headers_to_forward[key] = value
 
         # Inoltra la richiesta al target
