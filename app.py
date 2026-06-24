@@ -37,6 +37,13 @@ def proxy(path):
             if key_lower not in ['host', 'x-target-url', 'connection', 'content-length'] and not key_lower.startswith('x-forwarded-') and not key_lower.startswith('cdn-') and key_lower not in ['x-real-ip', 'true-client-ip', 'cf-connecting-ip']:
                 headers_to_forward[key] = value
 
+        # Leggiamo il timeout richiesto dal client (default 5 se non specificato)
+        client_timeout = request.headers.get('X-Proxy-Timeout')
+        try:
+            timeout_val = float(client_timeout) if client_timeout else 5.0
+        except:
+            timeout_val = 5.0
+
         # Inoltra la richiesta al target
         resp = requests.request(
             method=request.method,
@@ -46,7 +53,7 @@ def proxy(path):
             cookies=request.cookies,
             allow_redirects=False,
             verify=False,
-            timeout=15
+            timeout=timeout_val
         )
 
         # Rimuove gli header hop-by-hop dalla risposta
