@@ -30,6 +30,6 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./BunnyProxy
+          context: .
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/bnpr:latest
