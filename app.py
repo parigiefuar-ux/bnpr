@@ -1,16 +1,32 @@
-from flask import Flask, request, Response
+from flask import Flask, request, Response, jsonify
 import requests
+import socket
 
 app = Flask(__name__)
 
 @app.route('/', defaults={'path': ''}, methods=['GET', 'POST', 'PUT', 'DELETE', 'PATCH'])
 @app.route('/<path:path>', methods=['GET', 'POST', 'PUT', 'DELETE', 'PATCH'])
 def proxy(path):
-    # Prende l'URL di destinazione dall'header X-Target-Url
+    # Se non viene passato l'header X-Target-Url, restituiamo le info del container
     target_url = request.headers.get('X-Target-Url')
     
     if not target_url:
-        return "Benvenuto nel Proxy! Specifica un URL da proxare nell'header X-Target-Url", 400
+        # Raccogliamo informazioni utili sul container corrente
+        container_info = {
+            "message": "Bunny CDN Magic Container Proxy is Running!",
+            "container_ip": "Sconosciuto",
+            "headers_received": dict(request.headers)
+        }
+        
+        # Proviamo a ottenere l'IP pubblico del container
+        try:
+            ip_resp = requests.get('https://api.ipify.org?format=json', timeout=5)
+            if ip_resp.status_code == 200:
+                container_info["container_ip"] = ip_resp.json().get("ip")
+        except:
+            pass
+            
+        return jsonify(container_info), 200
 
     try:
         # Rimuove gli header che non vogliamo inoltrare al target
