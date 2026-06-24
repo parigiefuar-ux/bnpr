@@ -17,8 +17,8 @@ def proxy(path):
         headers_to_forward = {}
         for key, value in request.headers:
             key_lower = key.lower()
-            # Rimuoviamo anche X-Forwarded-For e X-Real-IP per evitare leak dell'IP originale
-            if key_lower not in ['host', 'x-target-url', 'connection', 'content-length', 'x-forwarded-for', 'x-real-ip']:
+            # Rimuoviamo tutti gli header che possono rivelare l'IP o che sono specifici della CDN
+            if key_lower not in ['host', 'x-target-url', 'connection', 'content-length'] and not key_lower.startswith('x-forwarded-') and not key_lower.startswith('cdn-') and key_lower not in ['x-real-ip', 'true-client-ip', 'cf-connecting-ip']:
                 headers_to_forward[key] = value
 
         # Inoltra la richiesta al target
