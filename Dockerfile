@@ -5,9 +5,6 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY app.py .
+COPY app_bunny.py .
 
-# Non forziamo l'EXPOSE a 8080, lasciamo che sia dinamico
-# EXPOSE 8080
-
-CMD ["python", "app.py"]
+CMD ["gunicorn", "-w", "4", "-k", "gthread", "--threads", "16", "-b", "0.0.0.0:8080", "app_bunny:app"]
